@@ -54,7 +54,7 @@ namespace component {
                         aime_reader::set_card_light(0, 0, 0);
                         led_board::init_color();
                         using namespace component::ongeki_hardware;
-                        set_led(0xffffff);
+                        set_led(0xFF0000);
                         set_led_brightness(0xff);
                     }                  
 

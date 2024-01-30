@@ -56,7 +56,7 @@ namespace component {
             gpio_init(PICO_DEFAULT_LED_PIN);
             gpio_set_dir(PICO_DEFAULT_LED_PIN, GPIO_OUT);
 
-            lightColors.fill(PicoLed::RGB(0, 255, 255));
+            lightColors.fill(PicoLed::RGB(255, 255, 255));
             lightColors.show();
 
             // check i2c lever
