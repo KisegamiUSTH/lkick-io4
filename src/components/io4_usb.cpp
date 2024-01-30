@@ -48,6 +48,30 @@ namespace component {
                     if (tud_hid_ready())
                         tud_hid_report(0x02, &output_keyboard_data, sizeof(output_keyboard_data));
                     break;
+
+                // Function to generate the next rainbow color
+                PicoLed::Color getNextRainbowColor() {
+                    static int colorIndex = 0;
+                    // Define your rainbow colors
+                    std::vector<PicoLed::Color> rainbowColors = {
+                        PicoLed::RGB(255, 0, 0),   // Red
+                        PicoLed::RGB(255, 127, 0), // Orange
+                        PicoLed::RGB(255, 255, 0), // Yellow
+                        PicoLed::RGB(0, 255, 0),   // Green
+                        PicoLed::RGB(0, 0, 255),   // Blue
+                        PicoLed::RGB(75, 0, 130),  // Indigo
+                        PicoLed::RGB(143, 0, 255)  // Violet
+                    };
+
+                    // Get the current color
+                    PicoLed::Color currentColor = rainbowColors[colorIndex];
+
+                    // Update the index for the next call
+                    colorIndex = (colorIndex + 1) % rainbowColors.size();
+
+                     return currentColor;
+                }
+
                 case MODE::IO4:
                     if (last_mode != this_mode){
                         aime_led.setBrightness(0xff);
@@ -57,7 +81,8 @@ namespace component {
                         set_led(0xFF0000);
                         set_led_brightness(0xff);
                     }                  
-
+                    PicoLed::Color rainbowColor = getNextRainbowColor();
+                    component::ongeki_hardware::set_led(rainbowColor.toRgbValue());
                     component::ongeki_hardware::update_hardware(&output_data);
 
                     if (tud_hid_ready())
