@@ -74,25 +74,28 @@ namespace component {
                     break;
 
                 case MODE::IO4:
-                    if (last_mode != this_mode){
+                {
+                    if (last_mode != this_mode) {
                         aime_led.setBrightness(0xff);
                         aime_reader::set_card_light(0, 0, 0);
                         led_board::init_color();
                         using namespace component::ongeki_hardware;
                         set_led(0xFF0000);
                         set_led_brightness(0xff);
-                    }                  
+                    }
+
                     PicoLed::Color rainbowColor = getNextRainbowColor();
-                    uint32_t rgbValue = colorToRgbValue(rainbowColor);  // Convert to RGB integer
+                    uint32_t rgbValue = colorToRgbValue(rainbowColor); // Convert to RGB integer
                     component::ongeki_hardware::set_led(rgbValue);
                     component::ongeki_hardware::update_hardware(&output_data);
 
                     if (tud_hid_ready())
                         tud_hid_report(0x01, &output_data, sizeof(output_data));
                     break;
+                }
                 default:
                     break;
-                }
+                    
                 last_mode = this_mode;
                 vTaskDelay(6 / portTICK_PERIOD_MS);
             }
