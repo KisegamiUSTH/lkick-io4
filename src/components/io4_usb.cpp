@@ -7,7 +7,31 @@ namespace component {
     namespace io4_usb {
         output_t output_data;
         output_keyboard_t output_keyboard_data;
+        // Define the getNextRainbowColor function
+        PicoLed::Color getNextRainbowColor() {
+            static int colorIndex = 0;
+            // Define your rainbow colors
+            std::vector<PicoLed::Color> rainbowColors = {
+                PicoLed::RGB(255, 0, 0),   // Red
+                PicoLed::RGB(255, 127, 0), // Orange
+                PicoLed::RGB(255, 255, 0), // Yellow
+                PicoLed::RGB(0, 255, 0),   // Green
+                PicoLed::RGB(0, 0, 255),   // Blue
+                PicoLed::RGB(75, 0, 130),  // Indigo
+                PicoLed::RGB(143, 0, 255)  // Violet
+            };
 
+            PicoLed::Color currentColor = rainbowColors[colorIndex];
+            colorIndex = (colorIndex + 1) % rainbowColors.size();
+            return currentColor;
+        }
+
+        // Function to convert PicoLed::Color to RGB integer (if needed)
+        uint32_t colorToRgbValue(const PicoLed::Color& color) {
+            // Assuming PicoLed::Color has red, green, blue fields
+            return (color.red << 16) | (color.green << 8) | color.blue;
+        }
+        
         void usb_init() {
             xTaskCreate(tud, "tud", 2048, NULL, 10, NULL);
         }
@@ -49,29 +73,6 @@ namespace component {
                         tud_hid_report(0x02, &output_keyboard_data, sizeof(output_keyboard_data));
                     break;
 
-                // Function to generate the next rainbow color
-                PicoLed::Color getNextRainbowColor() {
-                    static int colorIndex = 0;
-                    // Define your rainbow colors
-                    std::vector<PicoLed::Color> rainbowColors = {
-                        PicoLed::RGB(255, 0, 0),   // Red
-                        PicoLed::RGB(255, 127, 0), // Orange
-                        PicoLed::RGB(255, 255, 0), // Yellow
-                        PicoLed::RGB(0, 255, 0),   // Green
-                        PicoLed::RGB(0, 0, 255),   // Blue
-                        PicoLed::RGB(75, 0, 130),  // Indigo
-                        PicoLed::RGB(143, 0, 255)  // Violet
-                    };
-
-                    // Get the current color
-                    PicoLed::Color currentColor = rainbowColors[colorIndex];
-
-                    // Update the index for the next call
-                    colorIndex = (colorIndex + 1) % rainbowColors.size();
-
-                     return currentColor;
-                }
-
                 case MODE::IO4:
                     if (last_mode != this_mode){
                         aime_led.setBrightness(0xff);
@@ -82,7 +83,8 @@ namespace component {
                         set_led_brightness(0xff);
                     }                  
                     PicoLed::Color rainbowColor = getNextRainbowColor();
-                    component::ongeki_hardware::set_led(rainbowColor.toRgbValue());
+                    uint32_t rgbValue = colorToRgbValue(rainbowColor);  // Convert to RGB integer
+                    component::ongeki_hardware::set_led(rgbValue);
                     component::ongeki_hardware::update_hardware(&output_data);
 
                     if (tud_hid_ready())
