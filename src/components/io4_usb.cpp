@@ -74,7 +74,6 @@ namespace component {
                     break;
 
                 case MODE::IO4:
-                {
                     if (last_mode != this_mode) {
                         aime_led.setBrightness(0xff);
                         aime_reader::set_card_light(0, 0, 0);
@@ -92,10 +91,9 @@ namespace component {
                     if (tud_hid_ready())
                         tud_hid_report(0x01, &output_data, sizeof(output_data));
                     break;
-                }
                 default:
                     break;
-                    
+                }
                 last_mode = this_mode;
                 vTaskDelay(6 / portTICK_PERIOD_MS);
             }
