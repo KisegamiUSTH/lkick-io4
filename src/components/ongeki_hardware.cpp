@@ -16,8 +16,8 @@ namespace component {
 
     const uint8_t PIN_BIT[10] = {
             // L: A B C SIDE MENU
-            1, 1, 1, 0, 1,
-            1, 1, 1, 0, 1};
+            1, 1, 1, 1, 1,
+            1, 1, 1, 1, 1};
 
     const uint8_t SWITCH_INDEX[10] = {
             0, 0, 0, 1, 1,
@@ -81,12 +81,12 @@ namespace component {
         void set_led(uint ledData) {
             for (auto i = 0; i < 3; i++) {
                 // Left1, Left2, Left3, Right1, Right2, Right3
-                lightColors.setPixelColor(i + 3, PicoLed::RGB(
+                lightColors.setPixelColor(i, PicoLed::RGB(
                         ((ledData >> bitPosMap[9 + i * 3]) & 1) * 255,
                         ((ledData >> bitPosMap[9 + i * 3 + 1]) & 1) * 255,
                         ((ledData >> bitPosMap[9 + i * 3 + 2]) & 1) * 255
                 )); // r
-                lightColors.setPixelColor(i, PicoLed::RGB(
+                lightColors.setPixelColor(i + 3, PicoLed::RGB(
                         ((ledData >> bitPosMap[i * 3]) & 1) * 255,
                         ((ledData >> bitPosMap[i * 3 + 1]) & 1) * 255,
                         ((ledData >> bitPosMap[i * 3 + 2]) & 1) * 255
@@ -193,7 +193,7 @@ namespace component {
 //                tud_cdc_write_char('\n');
             } else {
                 analog.update();
-                uint16_t raw = analog.getValue() << 4;
+                uint16_t raw = 65535 - (analog.getValue() << 4);
                 data->analog[0] = *(int16_t *) &raw;
                 data->rotary[0] = *(int16_t *) &raw;
             }
