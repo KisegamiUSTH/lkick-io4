@@ -193,7 +193,7 @@ namespace component {
 //                tud_cdc_write_char('\n');
             } else {
                 analog.update();
-                uint16_t raw = analog.getValue() << 3;
+                uint16_t raw = analog.getValue() << 5;
                 data->analog[0] = *(int16_t *) &raw;
                 data->rotary[0] = *(int16_t *) &raw;
             }
