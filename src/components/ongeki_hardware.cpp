@@ -193,9 +193,7 @@ namespace component {
 //                tud_cdc_write_char('\n');
             } else {
                 analog.update();
-                // uint16_t raw = analog.getValue() << 5;
-                float scalingFactor = 3.5;
-                uint16_t raw = static_cast<uint16_t>(analog.getValue() * scalingFactor);
+                uint16_t raw = analog.getValue();
                 data->analog[0] = *(int16_t *) &raw;
                 data->rotary[0] = *(int16_t *) &raw;
             }
